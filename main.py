@@ -20,10 +20,12 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Modify in production to specific origins
+    allow_origins=["*"],  # In production, change to specific origins like ["http://localhost:4200"]
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,  # Cache preflight requests for 10 minutes
 )
 
 # Get API key from environment variables
@@ -70,8 +72,9 @@ async def get_openai_client():
         yield client
 
 
+
 # Endpoint for Post requests
-@app.post("/generate-strategy", response_model=StrategyResponse)
+@app.post("/overview", response_model=StrategyResponse)
 async def generate_strategy(
         request: StrategyRequest,
         client: httpx.AsyncClient = Depends(get_openai_client)
@@ -99,11 +102,9 @@ async def generate_strategy(
 
     prompt += (
         "Format response as JSON with these sections:\n"
-        "- Overview: Brief context and challenge summary\n"
-        "- Strategic Analysis: Key insights based on the St. Gallen Model\n"
-        "- Recommendations: Specific actionable steps\n"
-        "- Implementation: How to execute the strategy\n"
-        "- Metrics: How to measure success"
+        "- Overview: Brief context and challenge summary giving  3 or 5 management Challenges and opportunity areas\n"
+       "Ex:{ managementChallenges: [{ name: value,description:value,strategy:value}]opportunityAreas:[{name:value,description:value,action:value}]}"
+
     )
 
     try:
@@ -126,8 +127,10 @@ async def generate_strategy(
                         "content": prompt
                     }
                 ],
-                "temperature": 0.7,
-                "max_tokens": 1000
+                        "temperature" : 1,
+                    "max_tokens" : 5048,
+                    "top_p" : 1,
+                    "store" : True
             }
         )
 
@@ -177,7 +180,7 @@ async def generate_strategy(
         """
         # Build the prompt using the request parameters
         prompt = (
-            "As a management consultant expert in the St. Gallen Management Model, provide strategic advice for:\n\n"
+            "As a management consultant expert in the St. Gallen Management Model, provide strategic advice for: \n\n"
             f"Industry: {request.industry}\n"
             f"Role: {request.persona}\n"
             f"Market scope: {request.market}\n"
@@ -196,7 +199,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - Environment analysis of the impact of decision\n"
-
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}] strict follow the example of data return only impact"
         )
 
         try:
@@ -222,7 +225,7 @@ async def generate_strategy(
                     "temperature" : 1,
                     "max_tokens" : 5048,
                     "top_p" : 1,
-                    "store" : True
+
                 }
             )
 
@@ -289,6 +292,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in technology sphere\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
 
         )
 
@@ -384,6 +388,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in nature sphere\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
 
         )
 
@@ -477,6 +482,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in society sphere\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
 
         )
 
@@ -571,7 +577,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - interaction issue  analysis of the impact of decision give resources concerns and interests\n"
-
+            "Ex:{resourse:[{name: value, description:value}],concernsIntests:{name:value,description:value}"
         )
 
         try:
@@ -664,7 +670,7 @@ async def generate_strategy(
         prompt += (
             "Format response as JSON with these sections:\n"
             "Overview: Brief context and challenge summary - organization process analysis of the impact of decision give  me management,business,suport process\n"
-
+            "Ex:{managementProcess:[{name: value, description:value}],businessProcess:{name:value,description:value,suportProcess:{name:value,description:value}}"
         )
 
         try:
@@ -756,7 +762,8 @@ async def generate_strategy(
 
         prompt += (
             "Format response as JSON with these sections:\n"
-            "Overview: Brief context and challenge summary - management pratices analysis of the impact of decision give  me key chalanges,recomended aproaches\n"
+            "Overview: Brief context and challenge summary - management pratices analysis of the impact of decision give  me key chalanges,recomended aproaches bases on Role,Market scope,Tech adoption,Company size \n"
+            "Ex:{keyChallages:[{name: value, description:value}],recommendedAproaches:{name:value,description:value}}"
 
         )
 
