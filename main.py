@@ -102,10 +102,10 @@ async def generate_strategy(
 
     prompt += (
         "Format response as JSON with these sections:\n"
-        "- Overview: Brief context and challenge summary giving  3 or 5 management Challenges and opportunity areas\n"
-       "Ex:{ managementChallenges: [{ name: value,description:value,strategy:value}]opportunityAreas:[{name:value,description:value,action:value}]}"
-
-    )
+        "Overview: Brief context and challenge summary giving  3 or 5 management Challenges and opportunity areas\n"
+        "Format response as JSON with these sections EXACTLY as shown below, "
+        "without changing any key names:\n"
+        "overview: {model: value,context: value},managementChallenges:[{name: value,description: value,strategy: value}],opportunityAreas:[{name: value,description: value,action: value})]\n")
 
     try:
         # Call the OpenAI API with the prompt
@@ -194,12 +194,13 @@ async def generate_strategy(
         if request.additional_context:
             prompt += f"\nAdditional context: {request.additional_context}\n\n"
         else:
-            prompt += "\n\n"
+            prompt += "\n"
 
         prompt += (
-            "Format response as JSON with these sections:\n"
-            "Overview: Brief context and challenge summary - Environment analysis of the impact of decision\n"
-            "Ex:{ impact: [{ name: value,description:value,strategy:value}] strict follow the example of data return only impact"
+            "analysis of the impact of decision on economic aspect  \n "
+            "Format response as JSON with these sections EXACTLY as shown below, "
+            "without changing any key names:\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}] "
         )
 
         try:
@@ -291,8 +292,10 @@ async def generate_strategy(
 
         prompt += (
             "Format response as JSON with these sections:\n"
-            "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in technology sphere\n"
-            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
+            "Environment analysis of the impact of decision on tecnlogical aspect  \n "
+            "Format response as JSON with these sections EXACTLY as shown below, "
+            "without changing any key names:\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}] "
 
         )
 
@@ -386,10 +389,10 @@ async def generate_strategy(
             prompt += "\n\n"
 
         prompt += (
-            "Format response as JSON with these sections:\n"
-            "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in nature sphere\n"
-            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
-
+            "Environment analysis of the impact of decision on nature aspect  \n "
+            "Format response as JSON with these sections EXACTLY as shown below, "
+            "without changing any key names:\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}] "
         )
 
         try:
@@ -480,9 +483,10 @@ async def generate_strategy(
             prompt += "\n\n"
 
         prompt += (
-            "Format response as JSON with these sections:\n"
-            "Overview: Brief context and challenge summary - Environment analysis of the impact of decision in society sphere\n"
-            "Ex:{ impact: [{ name: value,description:value,strategy:value}]"
+            "Environment analysis of the impact of decision on society aspect  \n "
+            "Format response as JSON with these sections EXACTLY as shown below, "
+            "without changing any key names:\n"
+            "Ex:{ impact: [{ name: value,description:value,strategy:value}] "
 
         )
 
